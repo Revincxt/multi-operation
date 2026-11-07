@@ -1,0 +1,45 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="400" viewBox="0 0 1280 400" role="img" aria-labelledby="title desc">
+  <title id="title">Grid Mobility Lab</title>
+  <desc id="desc">Joint pricing and matching-radius simulation. Schematic grid illustration, not a simulation result.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" x2="1" y1="0" y2="1"><stop stop-color="#081727"/><stop offset="1" stop-color="#162640"/></linearGradient>
+    <linearGradient id="accent"><stop stop-color="#5eead4"/><stop offset="1" stop-color="#8b9eff"/></linearGradient>
+    <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse"><path d="M40 0H0V40" fill="none" stroke="#36516b" stroke-opacity=".18"/></pattern>
+    <g id="hex"><path d="M0 -24L21 -12V12L0 24L-21 12V-12Z"/></g>
+  </defs>
+  <rect width="1280" height="400" rx="22" fill="url(#bg)"/>
+  <rect width="1280" height="400" rx="22" fill="url(#grid)"/>
+  <rect x="58" y="57" width="4" height="18" rx="2" fill="#5eead4"/>
+  <g font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif">
+    <text x="76" y="71" fill="#83a4bd" font-size="13" letter-spacing="3">MOBILITY RESEARCH / SIMULATION</text>
+    <text x="56" y="145" fill="#f0f7ff" font-size="58" font-weight="700" letter-spacing="-2">Grid Mobility Lab</text>
+    <text x="60" y="191" fill="#b1c8dc" font-size="21">Joint pricing. Dynamic radius. Measurable outcomes.</text>
+    <path d="M60 225H658" stroke="url(#accent)" stroke-width="2"/>
+    <g font-size="13" font-weight="600">
+      <rect x="60" y="250" width="169" height="35" rx="17" fill="#163f42"/><text x="80" y="273" fill="#8ff1da">GRID-LEVEL ACTIONS</text>
+      <rect x="240" y="250" width="176" height="35" rx="17" fill="#25374e"/><text x="262" y="273" fill="#b7cdf5">BEHAVIOR RESPONSE</text>
+      <rect x="427" y="250" width="163" height="35" rx="17" fill="#2e315a"/><text x="451" y="273" fill="#cfccff">DATA PIPELINE</text>
+    </g>
+    <text x="60" y="347" fill="#82a2bb" font-size="15">SIMULATE</text><text x="150" y="347" fill="#5eead4" font-size="16">→</text>
+    <text x="182" y="347" fill="#82a2bb" font-size="15">EXPLORE</text><text x="269" y="347" fill="#5eead4" font-size="16">→</text>
+    <text x="301" y="347" fill="#82a2bb" font-size="15">COLLECT</text><text x="391" y="347" fill="#5eead4" font-size="16">→</text>
+    <text x="423" y="347" fill="#82a2bb" font-size="15">LEARN</text>
+  </g>
+  <g transform="translate(979 181)" stroke-width="1.3">
+    <g fill="#192e45" stroke="#405975">
+      <use href="#hex" x="0" y="-108"/><use href="#hex" x="-42" y="-108"/>
+      <use href="#hex" x="-63" y="-72"/><use href="#hex" x="-21" y="-72"/><use href="#hex" x="21" y="-72"/>
+      <use href="#hex" x="-84" y="-36"/><use href="#hex" x="-42" y="-36"/><use href="#hex" x="0" y="-36"/><use href="#hex" x="42" y="-36"/>
+      <use href="#hex" x="-105" y="0"/><use href="#hex" x="-63" y="0"/><use href="#hex" x="-21" y="0"/><use href="#hex" x="21" y="0"/><use href="#hex" x="63" y="0"/>
+      <use href="#hex" x="-84" y="36"/><use href="#hex" x="-42" y="36"/><use href="#hex" x="0" y="36"/><use href="#hex" x="42" y="36"/><use href="#hex" x="84" y="36"/>
+      <use href="#hex" x="-63" y="72"/><use href="#hex" x="-21" y="72"/><use href="#hex" x="21" y="72"/><use href="#hex" x="63" y="72"/>
+      <use href="#hex" x="0" y="108"/><use href="#hex" x="42" y="108"/>
+    </g>
+    <g fill="#155e63" stroke="#5eead4"><use href="#hex" x="-42" y="-36"/><use href="#hex" x="-21" y="0"/><use href="#hex" x="0" y="36"/></g>
+    <g fill="#403d72" stroke="#a5a2ff"><use href="#hex" x="21" y="-72"/><use href="#hex" x="42" y="-36"/><use href="#hex" x="63" y="0"/></g>
+    <circle cx="-21" r="78" fill="none" stroke="#5eead4" stroke-opacity=".45" stroke-dasharray="5 5"/>
+    <path d="M-84 36L-42 -36L-21 0L42 -36L63 0" fill="none" stroke="#ecfdf5" stroke-width="2"/>
+    <g fill="#f0fdfa" stroke="#0f343f"><circle cx="-84" cy="36" r="5"/><circle cx="-42" cy="-36" r="5"/><circle cx="-21" cy="0" r="5"/><circle cx="42" cy="-36" r="5"/><circle cx="63" cy="0" r="5"/></g>
+  </g>
+  <text x="869" y="347" fill="#7998b3" font-family="Arial,sans-serif" font-size="12" letter-spacing="2">PRICE × RADIUS → METRICS</text>
+</svg>
