@@ -1,0 +1,68 @@
+{
+  "schema_version": "dlmrd_training_v1",
+  "model_name": "dlmrd",
+  "model": {
+    "history_size": 24,
+    "history_steps": 4,
+    "context_size": 28,
+    "grid_count": 6,
+    "hidden_size": 64,
+    "num_heads": 8,
+    "num_layers": 3,
+    "d_ff": 128
+  },
+  "input_dir": "/Users/didi/Downloads/refactor_simulator-fragment_mdp/datasets_grid6_low_mixed47k_20261029",
+  "cache_dir": "/Users/didi/Downloads/refactor_simulator-fragment_mdp/datasets_grid6_low_mixed47k_20261029/sequence_cache/8041947369ab73f93ab7a9e3e42a9f64a1672b4326f3aa3edde3b223cadd4814",
+  "epochs": 1000,
+  "batch_size": 1024,
+  "learning_rate": 0.001,
+  "seed": 42,
+  "device": "mps",
+  "threads": 2,
+  "workers": 2,
+  "optimizer": "adam",
+  "weight_decay": 0.0,
+  "loss_weighting": "wesm",
+  "wesm": {
+    "gamma": 0.1,
+    "history_steps": 10,
+    "update_interval": 10
+  },
+  "split_counts": {
+    "train": 11089344,
+    "validation": 2334528,
+    "test": 2368128
+  },
+  "target_columns": [
+    "target_baseline_request_num",
+    "target_request_rate",
+    "target_driver_accept_rate",
+    "target_order_completion_rate",
+    "target_mean_wait_to_match_seconds",
+    "target_platform_revenue"
+  ],
+  "early_stopping": false,
+  "initialization": "random",
+  "smoke": false,
+  "normalization": "train_minmax",
+  "model_selection": "validation_equal_weight_minmax_mse",
+  "dataset_manifest_sha256": "ed2a0e69aea3be847b715a97109ca84876875cf5664b2096045577a44e14c1c6",
+  "cache_manifest_sha256": "016aab99b1081607ef2846854e201e471297c0bff70073b71b9b11e16f45bafe",
+  "normalization_sha256": "046ac5da2468eec609ea89e1d3648aae8c37555c3568eb43ca1f484756ce482f",
+  "source_sha256": {
+    "baseline/data.py": "c26ec0061615a780d0d1a8582f15f565b3db8fa0ed1054164e17a256f24a198a",
+    "baseline/dlmrd/__init__.py": "64418f6621b72de0abbecf32b660041aaa2c2e665a55cc4fbd504533467ff6e3",
+    "baseline/dlmrd/data.py": "c3e8245e23313def7264da0f92d4a335e5fc48f9fe61124e35d2ecdc4edf28bd",
+    "baseline/dlmrd/decision.py": "e2acdb9dc27733fdcc00cb83e2d8e0e0e0c33c1d00bcd14d2bf33ea8e870aad4",
+    "baseline/dlmrd/launch.py": "e1aa49f657e2941d0648577a26f532c92c13e6210e061174a625b1681f7969a8",
+    "baseline/dlmrd/model.py": "60315b21548b201ee1fa834962fce1106e905181a24ac9b0946b83ca4bd3638a",
+    "baseline/dlmrd/report.py": "cb5de25ff0e6f961408172a1c0de7954c010245731a0fd7ae0b737eb35e6bcb3",
+    "baseline/dlmrd/train.py": "2c50bd2f6122570db3c954be96fc1f70069cc31f7a57ee9c5262d59c5ab207bb",
+    "baseline/losses.py": "550d1532e09216dfe040218169c37b7ebf69edc13a308d00bcd9a9284dfca444",
+    "baseline/sequence.py": "b93a3e825c70c3a140042b383605f11c62143c32597ed5e5099db8c151cbfd32",
+    "baseline/training.py": "dc29ae10ebdfa60a278a8713fdfe524ec9ad64ec2fd131af8cc962b9e7a0266c"
+  },
+  "paper": "10.1016/j.tre.2024.103822",
+  "upstream_reference_commit": "1e627ad895f92a06382d7ec01571aeeb5fa5f48c",
+  "adaptation": "Six targets and joint price/radius context; 6 grids, four historical windows; retained run-level splits; independent implementation of paper equations 5-16 and WESM."
+}

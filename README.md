@@ -12,6 +12,8 @@
 
 现有方法包括 LSTM / TimesNet 监督预测、贪心与分块坐标搜索（BCS），以及六智能体离线 IQL。IQL 的各区域策略分别输出价格和匹配半径，使用集中式价值网络训练。方法与评估流程见 [离线强化学习说明](offline_rl/README.md)。
 
+[DL-MRD 六指标适配版](baseline/dlmrd/README.md)及其[权重与加载说明](checkpoints/dlmrd/README.md)现已提供：验证最优为第58轮，完整续训断点为第799轮，1000轮训练尚未完成。
+
 ## 环境与动作
 
 | 设置 | 当前配置 |

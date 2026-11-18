@@ -1,0 +1,35 @@
+{
+  "schema_version": "published_checkpoints_v1",
+  "created_date": "2026-11-18",
+  "scope": "DL-MRD validation-selected checkpoint and last completed training state; interrupted after 799 of 1000 epochs; test not evaluated.",
+  "files": [
+    {
+      "id": "dlmrd",
+      "name": "DL-MRD (validation best)",
+      "file": "dlmrd/best_model.pt",
+      "source_path": "models/dlmrd_grid6_low47k_mps1000_20261117/best_model.pt",
+      "bytes": 496821,
+      "sha256": "e1884853e0516f3baf2e8942d2c28db8845b911a7a15abce2b73c816cbc96a6f",
+      "comparison_protocol": null,
+      "includes_optimizer": false,
+      "source_code_commit": "9ebdf45ca1699a52038f30bf4d91b5975b26d3c2",
+      "epoch": 58,
+      "training_status": "interrupted_after_799_of_1000_epochs",
+      "test_evaluated": false
+    },
+    {
+      "id": "dlmrd_training_state",
+      "name": "DL-MRD (epoch 799 resume)",
+      "file": "dlmrd/latest.pt",
+      "source_path": "models/dlmrd_grid6_low47k_mps1000_20261117/latest.pt",
+      "bytes": 2275822,
+      "sha256": "c2edcbfc23d0ad5ba1a39e1b9721234f47aac5aa875baee07c65a3f50de16796",
+      "comparison_protocol": null,
+      "includes_optimizer": true,
+      "source_code_commit": "9ebdf45ca1699a52038f30bf4d91b5975b26d3c2",
+      "epoch": 799,
+      "training_status": "interrupted_after_799_of_1000_epochs",
+      "test_evaluated": false
+    }
+  ]
+}

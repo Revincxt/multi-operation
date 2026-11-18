@@ -1,5 +1,7 @@
 # LSTM / TimesNet + WESM
 
+[DL-MRD 六指标适配版](dlmrd/README.md)采用三层 Transformer、训练集 Min-Max 和 WESM；已发布权重与加载示例见 [checkpoints/dlmrd](../checkpoints/dlmrd/README.md)。
+
 两个基线均使用网格 embedding 和当前联合动作，同时预测六个指标，使用 WESM 动态平衡训练损失。
 当前 LSTM 使用四步历史、网格 embedding 和 28 维当前上下文：时间与自身动作、本区及邻区状态、四项全城状态，以及六个网格的价格与半径。
 训练沿用数据集划分；对于管线生成的 date 模式数据，会额外检查日期隔离和先后顺序，不重新混洗划分。
