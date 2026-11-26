@@ -1,14 +1,12 @@
 {
-  "schema_version": "dlmrd_published_training_state_v1",
-  "snapshot_date": "2026-11-18",
-  "status": "interrupted",
-  "epochs_completed": 799,
-  "epochs_target": 1000,
-  "interrupted_epoch": 800,
-  "error": "FloatingPointError",
-  "best_epoch": 58,
-  "best_validation_minmax_mse": 0.028889193669155364,
-  "test_evaluated": false,
-  "source_code_commit": "9ebdf45ca1699a52038f30bf4d91b5975b26d3c2",
-  "checkpoint_validation": "Both saved model states, Adam and WESM are finite; strict CPU model loading succeeded. Recovery past the interruption has not been tested."
+  "schema_version": "dlmrd_training_state_v2",
+  "snapshot_date": "2026-11-26",
+  "status": "complete",
+  "epochs_completed": 100,
+  "epochs_target": 100,
+  "best_epoch": 33,
+  "best_validation_normalized_mse": 0.2576141270464052,
+  "test_evaluated": true,
+  "checkpoint": "best_model.pt",
+  "resume_state_included": false
 }

@@ -12,7 +12,8 @@ from torch import nn
 class WESMLoss(nn.Module):
     """误差越大的任务权重越高；权重计算不参与梯度传播。"""
 
-    def __init__(self, task_count, gamma=0.1, history_steps=10, update_interval=10):
+    def __init__(self, task_count, gamma=0.1, history_steps=10, update_interval=10,
+                 task_multipliers=None):
         super().__init__()
         if (isinstance(task_count, bool) or not isinstance(task_count, int) or task_count <= 0
                 or isinstance(history_steps, bool) or not isinstance(history_steps, int)
@@ -24,7 +25,16 @@ class WESMLoss(nn.Module):
         self.gamma = gamma
         self.history_steps = history_steps
         self.update_interval = update_interval
-        self.register_buffer("weights", torch.full((task_count,), 1.0 / task_count))
+        if task_multipliers is None:
+            task_multipliers = [1.0] * task_count
+        if (len(task_multipliers) != task_count
+                or any(not torch.isfinite(torch.tensor(value)) or value <= 0
+                       for value in task_multipliers)):
+            raise ValueError
+        # 固定倍率只改变各任务的相对重要性；WESM 仍根据近期误差动态调整权重。
+        self.task_multipliers = tuple(float(value) for value in task_multipliers)
+        initial = torch.tensor(self.task_multipliers, dtype=torch.float32)
+        self.register_buffer("weights", initial / initial.sum())
         self.register_buffer("loss_history", torch.zeros(history_steps + 1, task_count))
         self.register_buffer("step_count", torch.zeros((), dtype=torch.int64))
 
@@ -50,7 +60,14 @@ class WESMLoss(nn.Module):
                     maximum = smoothed.max()
                     if maximum > 0:
                         relative = smoothed / maximum
-                        self.weights.copy_(relative / relative.sum())
+                        multipliers = torch.as_tensor(
+                            self.task_multipliers, device=task_losses.device,
+                            dtype=task_losses.dtype)
+                        weighted = relative * multipliers
+                        self.weights.copy_(weighted / weighted.sum())
                     else:
-                        self.weights.fill_(1.0 / self.task_count)
+                        initial = torch.as_tensor(
+                            self.task_multipliers, device=self.weights.device,
+                            dtype=self.weights.dtype)
+                        self.weights.copy_(initial / initial.sum())
         return torch.sum(self.weights.detach().clone() * task_losses)

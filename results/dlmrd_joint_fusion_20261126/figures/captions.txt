@@ -1,0 +1,5 @@
+Training convergence: full unsmoothed training/validation curves and the first 100 epochs (or all available epochs), with the same vertical scale. MSE is measured after training-only training-only normalization and averaged equally across six targets; it is not the dynamically weighted WESM training objective. Dotted lines mark the common checkpoint with minimum mean validation MSE; test metrics are not used to select it.
+
+Task convergence: the six targets use separate vertical scales and the same selected epoch. Task weights are sample-weighted averages of the weights used in each epoch.
+
+Test metrics, when present: RMSE of the selected DL-MRD checkpoint and last-observation persistence on the held-out test split. Rate errors are plotted in percentage points (pp); test_results.csv retains the original units and additionally contains MAE and R². These are predictive errors, not simulator policy performance. No across-seed uncertainty is estimated from this single training run.

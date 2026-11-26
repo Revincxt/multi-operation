@@ -53,6 +53,6 @@ python3 -m resource_rl.launch --protocol experiments/resource_flow_main_20261105
 
 MPS检查中逐步采样与完整序列重算的最大对数概率误差约5.72×10⁻⁶，GPU分配约1.3 GB。区域图方法400086个参数，窗口控制428494个参数。驱动任务ETA按固定车速模型及当前接驾／送客阶段计算，不读取未来订单。
 
-正式训练已按每个初始化100000条、两结构各3个种子的预算启动。协议和代码快照位于 `experiments/resource_flow_main_20261105/`，实时进度、完整断点及曲线位于 `models/resource_flow_100k_20261105/`。正式初始权重与随机初始化校验一致，未加载小试权重。验证记录位于 `experiments/resource_rl_checks_20261105/verification.json`，原在线训练及权重保持暂停且未改动。
+截至 2026-11-10，正式训练已暂停，共完成 3,648 条完整轨迹；各运行完成 576 或 640 条，尚不能判断最终收益。协议和代码快照位于 `experiments/resource_flow_main_20261105/`，完整断点及曲线位于 `models/resource_flow_100k_20261105/`。原定预算仍为每个初始化 100,000 条、两结构各 3 个种子。正式训练从随机权重开始，未加载小试权重；验证记录见 `experiments/resource_rl_checks_20261105/verification.json`。本轮清理保留训练源码、数据、协议及所有正式断点，不自动恢复训练。
 
 参考：[递归Actor–Critic](https://arxiv.org/abs/2110.05038)、[历史—状态Critic](https://arxiv.org/abs/2105.11674)、[MAPPO训练研究](https://arxiv.org/abs/2103.01955)、[辅助学习](https://arxiv.org/abs/1611.05397)。这些文献支持设计动机，不代表本组合已被验证有效或具有单调改进保证。

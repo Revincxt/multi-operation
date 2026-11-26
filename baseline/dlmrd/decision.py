@@ -23,7 +23,7 @@ def select_actions(predictor, frame, price_values, radius_values,
 
     frame 每个已知网格恰有一行，只含历史及当前可观测输入，不接受 target 列。
     枚举某网格的自身动作时，其联合动作列同步更新，其他网格保持输入上下文。
-    revenue 最大化原量纲收益；paper_score 用训练集 Min-Max 归一化预测，
+    revenue 最大化原量纲收益；paper_score 用训练集拟合的标准化参数归一化预测，
     默认六项等权，等待时间取负向。metric_weights 可为六项序列或完整目标列映射，
     非负权重会归一化到和为 1；预测和分数均不裁剪，也不对负分取绝对值。
     这是论文逐网格候选评分的六指标适配，不包含长程规划或全城联合最优保证。
@@ -54,8 +54,6 @@ def select_actions(predictor, frame, price_values, radius_values,
                     raise ValueError
 
     if objective == "paper_score":
-        if processor.state_dict().get("normalization") != "train_minmax":
-            raise ValueError
         if isinstance(metric_weights, Mapping):
             if set(metric_weights) != set(TARGET_COLUMNS):
                 raise ValueError

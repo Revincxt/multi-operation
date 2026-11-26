@@ -1,0 +1,79 @@
+{
+  "schema_version": "dlmrd_training_v2",
+  "model_name": "dlmrd_joint_fusion",
+  "model": {
+    "history_size": 24,
+    "history_steps": 4,
+    "context_size": 28,
+    "grid_count": 6,
+    "hidden_size": 64,
+    "num_heads": 8,
+    "num_layers": 3,
+    "d_ff": 128,
+    "embedding_size": 16,
+    "fusion_hidden_size": 128,
+    "dropout": 0.1
+  },
+  "input_dir": "datasets_grid6_low_mixed47k_20261029 (not included)",
+  "cache_dir": "not included",
+  "epochs": 100,
+  "batch_size": 2048,
+  "learning_rate": 0.001,
+  "seed": 42,
+  "device": "cpu",
+  "threads": 8,
+  "workers": 2,
+  "optimizer": "adamw",
+  "weight_decay": 0.001,
+  "loss_weighting": "wesm_task_weighted",
+  "wesm": {
+    "gamma": 0.1,
+    "history_steps": 10,
+    "update_interval": 10,
+    "task_multipliers": [
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      4.5
+    ]
+  },
+  "split_counts": {
+    "train": 11089344,
+    "validation": 2334528,
+    "test": 2368128
+  },
+  "target_columns": [
+    "target_baseline_request_num",
+    "target_request_rate",
+    "target_driver_accept_rate",
+    "target_order_completion_rate",
+    "target_mean_wait_to_match_seconds",
+    "target_platform_revenue"
+  ],
+  "early_stopping": false,
+  "initialization": "random",
+  "smoke": false,
+  "model_selection": "validation_equal_weight_normalized_mse",
+  "dataset_manifest_sha256": "ed2a0e69aea3be847b715a97109ca84876875cf5664b2096045577a44e14c1c6",
+  "cache_manifest_sha256": "016aab99b1081607ef2846854e201e471297c0bff70073b71b9b11e16f45bafe",
+  "normalization": "train_zscore",
+  "normalization_sha256": "016aab99b1081607ef2846854e201e471297c0bff70073b71b9b11e16f45bafe",
+  "source_sha256": {
+    "baseline/data.py": "c26ec0061615a780d0d1a8582f15f565b3db8fa0ed1054164e17a256f24a198a",
+    "baseline/dlmrd/__init__.py": "64418f6621b72de0abbecf32b660041aaa2c2e665a55cc4fbd504533467ff6e3",
+    "baseline/dlmrd/data.py": "c3e8245e23313def7264da0f92d4a335e5fc48f9fe61124e35d2ecdc4edf28bd",
+    "baseline/dlmrd/decision.py": "673366b5c87c99647a40296a837e807e9e1502400a58889d6bb5427efada1d8e",
+    "baseline/dlmrd/launch.py": "6c4fb33dc3b34a85b1586cd89c48283b095ead08b534fb7579283883aeaaed6c",
+    "baseline/dlmrd/model.py": "0c1104985dfbe5a21d0709e592982238b1e1c0cfe45c8b9cea0106092fdd6446",
+    "baseline/dlmrd/report.py": "f0e228468d29f2d5f8d8726d00f7fcdc0c1f047451ecd2b6ed3dd5bd8813c1c1",
+    "baseline/dlmrd/train.py": "6464c318c3664dde01b005a66b8ab1b0622c641c5f1bfee920c30154ae8069e0",
+    "baseline/losses.py": "8c9687477b6cfbee1238b95005231e1418f7b06ab4504c37a5e957104198f6ae",
+    "baseline/sequence.py": "b93a3e825c70c3a140042b383605f11c62143c32597ed5e5099db8c151cbfd32",
+    "baseline/training.py": "dc29ae10ebdfa60a278a8713fdfe524ec9ad64ec2fd131af8cc962b9e7a0266c"
+  },
+  "paper": "10.1016/j.tre.2024.103822",
+  "upstream_reference_commit": "1e627ad895f92a06382d7ec01571aeeb5fa5f48c",
+  "adaptation": "Six targets and joint price/radius context; temporal Transformer followed by nonlinear shared fusion of history, current state, all-grid actions and grid embedding; retained run-level splits; WESM loss."
+}

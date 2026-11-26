@@ -1,0 +1,154 @@
+{
+  "model_name": "dlmrd_joint_fusion",
+  "best_epoch": 33,
+  "epochs_run": 100,
+  "best_validation_normalized_mse": 0.2576141270464052,
+  "loss_weighting": "wesm_task_weighted",
+  "wesm_config": {
+    "gamma": 0.1,
+    "history_steps": 10,
+    "update_interval": 10,
+    "task_multipliers": [
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      4.5
+    ]
+  },
+  "splits": {
+    "validation": {
+      "dlmrd": {
+        "target_baseline_request_num": {
+          "mae": 2.0882027722964795,
+          "rmse": 3.0459856115489297,
+          "r2": 0.9719469014000603
+        },
+        "target_request_rate": {
+          "mae": 0.1586936325000747,
+          "rmse": 0.24102331475440567,
+          "r2": 0.5425743475247081
+        },
+        "target_driver_accept_rate": {
+          "mae": 0.135244467020079,
+          "rmse": 0.23547756778318846,
+          "r2": 0.6707124572997556
+        },
+        "target_order_completion_rate": {
+          "mae": 0.16465917745987094,
+          "rmse": 0.24728016940491568,
+          "r2": 0.6020925594074411
+        },
+        "target_mean_wait_to_match_seconds": {
+          "mae": 15.448887768745147,
+          "rmse": 28.70253671699685,
+          "r2": 0.720148293324088
+        },
+        "target_platform_revenue": {
+          "mae": 3.8363709129171752,
+          "rmse": 5.639824199051041,
+          "r2": 0.9451760806905859
+        }
+      },
+      "persistence": {
+        "target_baseline_request_num": {
+          "mae": 2.970367457576007,
+          "rmse": 4.455514205391295,
+          "r2": 0.939976570113822
+        },
+        "target_request_rate": {
+          "mae": 0.2415241362810405,
+          "rmse": 0.39390489318957655,
+          "r2": -0.22175790557599862
+        },
+        "target_driver_accept_rate": {
+          "mae": 0.18197654955254977,
+          "rmse": 0.38035248446211806,
+          "r2": 0.14089008109841905
+        },
+        "target_order_completion_rate": {
+          "mae": 0.22784564412683575,
+          "rmse": 0.39305391073601365,
+          "r2": -0.005327874863038762
+        },
+        "target_mean_wait_to_match_seconds": {
+          "mae": 26.057537007152717,
+          "rmse": 50.881992681306706,
+          "r2": 0.12054095520302688
+        },
+        "target_platform_revenue": {
+          "mae": 6.491714786383057,
+          "rmse": 10.13881726843032,
+          "r2": 0.8228204729756204
+        }
+      }
+    },
+    "test": {
+      "dlmrd": {
+        "target_baseline_request_num": {
+          "mae": 2.0921533364986034,
+          "rmse": 3.0536870565656877,
+          "r2": 0.9718126560014312
+        },
+        "target_request_rate": {
+          "mae": 0.1588367196081128,
+          "rmse": 0.24120161315029626,
+          "r2": 0.5426020694723495
+        },
+        "target_driver_accept_rate": {
+          "mae": 0.13534757226036975,
+          "rmse": 0.23548265842581556,
+          "r2": 0.670845243213209
+        },
+        "target_order_completion_rate": {
+          "mae": 0.16471246547076943,
+          "rmse": 0.2473631498235089,
+          "r2": 0.6017125925862297
+        },
+        "target_mean_wait_to_match_seconds": {
+          "mae": 15.485588936847543,
+          "rmse": 28.778161209760384,
+          "r2": 0.7189959766213087
+        },
+        "target_platform_revenue": {
+          "mae": 3.831708729734443,
+          "rmse": 5.6317752803770125,
+          "r2": 0.9453016468825699
+        }
+      },
+      "persistence": {
+        "target_baseline_request_num": {
+          "mae": 2.977080630776715,
+          "rmse": 4.467786962786635,
+          "r2": 0.9396621248446914
+        },
+        "target_request_rate": {
+          "mae": 0.24138198678266612,
+          "rmse": 0.39370088700066475,
+          "r2": -0.2186151296279495
+        },
+        "target_driver_accept_rate": {
+          "mae": 0.18184075961902327,
+          "rmse": 0.3800848768144569,
+          "r2": 0.14248158485363738
+        },
+        "target_order_completion_rate": {
+          "mae": 0.22764858016256395,
+          "rmse": 0.39278316084621145,
+          "r2": -0.004227921309329918
+        },
+        "target_mean_wait_to_match_seconds": {
+          "mae": 26.092975045404682,
+          "rmse": 51.014581511699404,
+          "r2": 0.11697070327288683
+        },
+        "target_platform_revenue": {
+          "mae": 6.497377279014612,
+          "rmse": 10.15376888733675,
+          "r2": 0.8221973766720834
+        }
+      }
+    }
+  }
+}

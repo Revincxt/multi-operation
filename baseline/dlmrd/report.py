@@ -62,7 +62,7 @@ def curves(ax, frame, train, validation, best_epoch):
         ax.plot(best_epoch, selected.iloc[0][validation], "o", color=VALIDATION_COLOR,
                 ms=3, markeredgecolor="white", markeredgewidth=.4)
     ax.set_xlabel("Epoch")
-    ax.set_ylabel("Min-max MSE ↓")
+    ax.set_ylabel("Normalized MSE ↓")
     ax.grid(axis="y", alpha=.2, lw=.5)
     ax.ticklabel_format(axis="y", useOffset=False)
     ax.set_xlim(0, max(2, int(frame.epoch.max())))
@@ -106,7 +106,7 @@ def plot_training(frame, output):
 
 
 def test_results(metrics):
-    if metrics.get("model_name") != "dlmrd":
+    if metrics.get("model_name") not in ("dlmrd", "dlmrd_joint_fusion"):
         raise ValueError
     rows = []
     results = metrics["splits"]["test"]
@@ -150,8 +150,11 @@ def run(output):
     destination = output / "paper_figures"
     destination.mkdir(parents=True, exist_ok=True)
     best_epoch = plot_training(frame, destination)
+    config_path = output / "training_config.json"
+    config = json.loads(config_path.read_text()) if config_path.exists() else {}
+    normalization = config.get("normalization", "train_minmax")
     result = {"status": "training", "epochs_run": len(frame), "best_epoch": best_epoch,
-              "normalization": "Training-only min-max; train/validation curves use equal task mean MSE.",
+              "normalization": f"{normalization}; train/validation curves use equal task mean MSE.",
               "smoothing": False, "zoom_epochs": [1, min(100, len(frame))],
               "png_dpi": 600, "width_inches": 7.16}
     source = output / "metrics.json"
@@ -167,7 +170,7 @@ def run(output):
     caption = (
         "Training convergence: full unsmoothed training/validation curves and the first 100 epochs "
         "(or all available epochs), with the same vertical scale. MSE is measured after training-only "
-        "min-max normalization and averaged equally across six targets; it is not the dynamically "
+        "training-only normalization and averaged equally across six targets; it is not the dynamically "
         "weighted WESM training objective. Dotted lines mark the common checkpoint with minimum "
         "mean validation MSE; test metrics are not used to select it.\n\n"
         "Task convergence: the six targets use separate vertical scales and the same selected epoch. "

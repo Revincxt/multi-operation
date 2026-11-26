@@ -12,8 +12,8 @@ import numpy as np
 import pandas as pd
 import torch
 
-from baseline.data import DEFAULT_INPUT
-from baseline.dlmrd.data import load_dataset
+from baseline.data import DEFAULT_INPUT, load_prepared_dataset
+from baseline.dlmrd.data import load_dataset as load_minmax_dataset
 from baseline.dlmrd.model import GridDLMRD, DLMRDPredictor
 from baseline.losses import WESMLoss
 from baseline.sequence import TARGET_COLUMNS
@@ -111,7 +111,13 @@ def run(args):
     root.mkdir(parents=True, exist_ok=True)
     lock = (root / ".train.lock").open("a")
     fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
-    if min(args.epochs, args.batch_size, args.threads) <= 0 or args.workers < 0:
+    if (min(args.epochs, args.batch_size, args.threads) <= 0 or args.workers < 0
+            or not np.isfinite(args.revenue_weight_multiplier)
+            or args.revenue_weight_multiplier <= 0
+            or not np.isfinite(args.learning_rate) or args.learning_rate <= 0
+            or not np.isfinite(args.weight_decay) or args.weight_decay < 0
+            or args.optimizer not in ("adam", "adamw")
+            or args.normalization not in ("zscore", "minmax")):
         raise ValueError
     if args.device == "mps" and not torch.backends.mps.is_available():
         raise RuntimeError("MPS unavailable")
@@ -119,29 +125,43 @@ def run(args):
     signal.signal(signal.SIGINT, stop)
     signal.signal(signal.SIGTERM, stop)
     save_json(root / "progress.json", {"status": "preparing", "pid": os.getpid()})
-    splits, processor, manifest = load_dataset(args.input, args.prepared_cache, root)
+    if args.normalization == "zscore":
+        # 与 LSTM 共用训练集拟合的 z-score 缓存，减少归一化差异对模型比较的影响。
+        splits, processor, manifest = load_prepared_dataset(args.input, args.prepared_cache)
+    else:
+        splits, processor, manifest = load_minmax_dataset(
+            args.input, args.prepared_cache, root)
     if args.smoke:
         for dataset in splits.values():
             dataset.sample_count = min(len(dataset), 4096)
     model_config = dict(history_size=len(processor.history_features), history_steps=processor.history_steps,
         context_size=len(processor.context_columns), grid_count=len(processor.grid_ids),
-        hidden_size=64, num_heads=8, num_layers=3, d_ff=128)
-    config = {"schema_version": "dlmrd_training_v1", "model_name": "dlmrd", "model": model_config,
+        hidden_size=64, num_heads=8, num_layers=3, d_ff=128,
+        embedding_size=16, fusion_hidden_size=128, dropout=0.1)
+    task_multipliers = [1., 1., 1., 1., 1., args.revenue_weight_multiplier]
+    config = {"schema_version": "dlmrd_training_v2", "model_name": "dlmrd_joint_fusion",
+        "model": model_config,
         "input_dir": str(Path(args.input).resolve()), "cache_dir": str(Path(args.prepared_cache).resolve()),
-        "epochs": args.epochs, "batch_size": args.batch_size, "learning_rate": .001,
+        "epochs": args.epochs, "batch_size": args.batch_size,
+        "learning_rate": args.learning_rate,
         "seed": args.seed, "device": args.device, "threads": args.threads, "workers": args.workers,
-        "optimizer": "adam", "weight_decay": 0., "loss_weighting": "wesm",
-        "wesm": {"gamma": .1, "history_steps": 10, "update_interval": 10},
+        "optimizer": args.optimizer, "weight_decay": args.weight_decay,
+        "loss_weighting": "wesm_task_weighted",
+        "wesm": {"gamma": .1, "history_steps": 10, "update_interval": 10,
+                 "task_multipliers": task_multipliers},
         "split_counts": {name: len(value) for name, value in splits.items()},
         "target_columns": list(TARGET_COLUMNS), "early_stopping": False,
-        "initialization": "random", "smoke": args.smoke, "normalization": "train_minmax",
-        "model_selection": "validation_equal_weight_minmax_mse",
+        "initialization": "random", "smoke": args.smoke,
+        "model_selection": "validation_equal_weight_normalized_mse",
         "dataset_manifest_sha256": sha256(Path(args.input) / "dataset_manifest.json"),
         "cache_manifest_sha256": sha256(Path(args.prepared_cache) / "cache_manifest.json"),
-        "normalization_sha256": sha256(root / "normalization.json"), "source_sha256": source_hashes(),
+        "normalization": "train_minmax" if args.normalization == "minmax" else "train_zscore",
+        "normalization_sha256": (sha256(root / "normalization.json")
+            if args.normalization == "minmax" else sha256(Path(args.prepared_cache) / "cache_manifest.json")),
+        "source_sha256": source_hashes(),
         "paper": "10.1016/j.tre.2024.103822",
         "upstream_reference_commit": "1e627ad895f92a06382d7ec01571aeeb5fa5f48c",
-        "adaptation": "Six targets and joint price/radius context; 6 grids, four historical windows; retained run-level splits; independent implementation of paper equations 5-16 and WESM."}
+        "adaptation": "Six targets and joint price/radius context; temporal Transformer followed by nonlinear shared fusion of history, current state, all-grid actions and grid embedding; retained run-level splits; WESM loss."}
     config_path = root / "training_config.json"
     if config_path.exists():
         old = json.loads(config_path.read_text())
@@ -151,7 +171,9 @@ def run(args):
         save_json(config_path, config)
     torch.manual_seed(args.seed)
     model = GridDLMRD(**model_config).to(args.device)
-    optimizer = torch.optim.Adam(model.parameters(), lr=.001)
+    optimizer_class = torch.optim.Adam if args.optimizer == "adam" else torch.optim.AdamW
+    optimizer = optimizer_class(model.parameters(), lr=args.learning_rate,
+                                weight_decay=args.weight_decay)
     criterion = WESMLoss(6, **config["wesm"])
     history, best, best_epoch = [], float("inf"), 0
     latest = root / "latest.pt"
@@ -199,7 +221,8 @@ def run(args):
                 atomic_save(root / "best_model.pt", {"schema_version": DLMRDPredictor.schema_version,
                     "model_config": model_config, "model_state_dict": cpu_weights(model),
                     "preprocessor": processor.state_dict(), "best_epoch": best_epoch,
-                    "validation_mse": best, "loss_weighting": "wesm", "wesm_config": config["wesm"],
+                    "validation_mse": best, "loss_weighting": config["loss_weighting"],
+                    "wesm_config": config["wesm"],
                     "loss_state_dict": cpu_weights(criterion)})
             atomic_save(latest, {"config_sha256": sha256(config_path), "model_state_dict": cpu_weights(model),
                 "optimizer_state_dict": optimizer.state_dict(), "loss_state_dict": cpu_weights(criterion),
@@ -217,8 +240,9 @@ def run(args):
             return
         progress("testing")
         predictor = DLMRDPredictor.load(root / "best_model.pt", args.device)
-        metrics = {"model_name": "dlmrd", "best_epoch": best_epoch, "epochs_run": len(history),
-            "best_validation_minmax_mse": best, "loss_weighting": "wesm", "splits": {}}
+        metrics = {"model_name": "dlmrd_joint_fusion", "best_epoch": best_epoch, "epochs_run": len(history),
+            "best_validation_normalized_mse": best, "loss_weighting": config["loss_weighting"],
+            "wesm_config": config["wesm"], "splits": {}}
         for name in ("validation", "test"):
             metrics["splits"][name] = evaluate(predictor.model, splits[name], processor, args.device, args.batch_size)
         save_json(root / "metrics.json", metrics)
@@ -236,12 +260,17 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--input", default=DEFAULT_INPUT)
     parser.add_argument("--prepared-cache", default=str(DEFAULT_CACHE))
-    parser.add_argument("--output", default="models/dlmrd_grid6_low47k_mps1000_20261117")
-    parser.add_argument("--epochs", type=int, default=1000)
-    parser.add_argument("--batch-size", type=int, default=1024)
+    parser.add_argument("--output", default="models/dlmrd_joint_fusion_grid6_low47k_cpu100")
+    parser.add_argument("--epochs", type=int, default=100)
+    parser.add_argument("--batch-size", type=int, default=2048)
+    parser.add_argument("--learning-rate", type=float, default=0.001)
+    parser.add_argument("--optimizer", choices=("adam", "adamw"), default="adamw")
+    parser.add_argument("--weight-decay", type=float, default=0.001)
     parser.add_argument("--seed", type=int, default=42)
-    parser.add_argument("--device", choices=("cpu", "mps"), default="mps")
-    parser.add_argument("--threads", type=int, default=2)
+    parser.add_argument("--device", choices=("cpu", "mps"), default="cpu")
+    parser.add_argument("--threads", type=int, default=8)
     parser.add_argument("--workers", type=int, default=2)
+    parser.add_argument("--revenue-weight-multiplier", type=float, default=4.5)
+    parser.add_argument("--normalization", choices=("zscore", "minmax"), default="zscore")
     parser.add_argument("--smoke", action="store_true")
     run(parser.parse_args())

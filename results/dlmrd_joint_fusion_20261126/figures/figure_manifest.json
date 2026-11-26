@@ -1,0 +1,14 @@
+{
+  "status": "complete",
+  "epochs_run": 100,
+  "best_epoch": 33,
+  "normalization": "train_zscore; train/validation curves use equal task mean MSE.",
+  "smoothing": false,
+  "zoom_epochs": [
+    1,
+    100
+  ],
+  "png_dpi": 600,
+  "width_inches": 7.16,
+  "loss_weighting": "wesm_task_weighted"
+}
